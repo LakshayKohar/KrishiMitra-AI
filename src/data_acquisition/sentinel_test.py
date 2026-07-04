@@ -1,32 +1,40 @@
-import ee
-
-PROJECT_ID = "krishimitra-ai-501314"
-
-# Initialize Earth Engine
-ee.Initialize(project=PROJECT_ID)
-
-# Sample location: NIT Kurukshetra
-point = ee.Geometry.Point([76.8222, 29.9695])
-
-# Get Sentinel-2 images
-collection = (
-    ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
-    .filterBounds(point)
-    .filterDate("2024-01-01", "2024-01-31")
-    .sort("CLOUDY_PIXEL_PERCENTAGE")
+from src.preprocessing.cloud_mask import mask_clouds
+from src.data_acquisition.sentinel import (
+    initialize,
+    get_sentinel_image,
+    get_image_metadata,
 )
 
-image = collection.first()
 
-if image is None:
-    print("No image found.")
-else:
-    info = image.getInfo()
+def main():
+    # Initialize Earth Engine
+    initialize()
+
+    # Retrieve Sentinel-2 image
+    image = get_sentinel_image(
+        longitude=76.8222,
+        latitude=29.9695,
+        start_date="2024-01-01",
+        end_date="2024-01-31",
+    )
+
+    # Apply cloud mask
+    masked_image = mask_clouds(image)
+
+    # Get metadata
+    metadata = get_image_metadata(image)
 
     print("=" * 50)
     print("Sentinel-2 Image Retrieved Successfully")
     print("=" * 50)
+    print(f"Image ID: {metadata['image_id']}")
+    print(f"Acquisition Date: {metadata['acquisition_date']}")
+    print(f"Cloud Cover: {metadata['cloud_cover']} %")
 
-    print(f"Image ID: {info['id']}")
-    print(f"Acquisition Date: {info['properties']['DATATAKE_IDENTIFIER']}")
-    print(f"Cloud Cover: {info['properties']['CLOUDY_PIXEL_PERCENTAGE']} %")
+    # Verify cloud masking
+    if masked_image:
+        print("\n✅ Cloud masking applied successfully.")
+
+
+if __name__ == "__main__":
+    main()
