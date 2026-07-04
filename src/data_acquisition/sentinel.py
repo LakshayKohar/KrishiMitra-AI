@@ -39,3 +39,10 @@ def get_image_metadata(image):
         "cloud_cover": info["properties"]["CLOUDY_PIXEL_PERCENTAGE"],
         "acquisition_date": info["properties"]["DATATAKE_IDENTIFIER"],
     }
+
+
+def get_image_geometry(image):
+    """
+    Return image geometry.
+    """
+    return image.geometry()
