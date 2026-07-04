@@ -1,3 +1,5 @@
+from src.dashboard.growth_stage_card import render_growth_stage_card
+from src.dashboard.final_advisory_card import render_final_advisory_card
 import sys
 from pathlib import Path
 
@@ -124,6 +126,8 @@ if report:
 
     render_health_card(report)
     render_crop_card(report)
+    render_growth_stage_card(report)
+    render_final_advisory_card(report)
     render_weather_card(report)
     render_irrigation_card(report)
     render_moisture_card(report)
