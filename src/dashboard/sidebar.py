@@ -20,7 +20,11 @@ def render_sidebar():
         value=date(2024, 1, 31)
     )
 
-    analyze = st.sidebar.button("🚀 Analyze")
+    analyze = st.sidebar.button("🚀 Analyze Current Image")
+
+    st.sidebar.divider()
+
+    build_dataset = st.sidebar.button("📈 Build Time-Series Dataset")
 
     st.sidebar.divider()
 
@@ -28,10 +32,11 @@ def render_sidebar():
     st.sidebar.success("Earth Engine Connected")
     st.sidebar.success("Geocoder Ready")
     st.sidebar.success("NDVI Engine Ready")
-    st.sidebar.success("Dashboard Active")
+    st.sidebar.success("Weather Engine Ready")
+    st.sidebar.success("Time-Series Engine Ready")
 
     st.sidebar.divider()
 
     st.sidebar.write("Version 1.0")
 
-    return location, start_date, end_date, analyze
+    return location, start_date, end_date, analyze, build_dataset

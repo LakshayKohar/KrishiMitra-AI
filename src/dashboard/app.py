@@ -1,6 +1,3 @@
-from src.dashboard.weather_card import render_weather_card
-from src.dashboard.irrigation_card import render_irrigation_card
-from src.dashboard.moisture_card import render_moisture_card
 import sys
 from pathlib import Path
 
@@ -18,6 +15,15 @@ from src.dashboard.health_card import render_health_card
 from src.dashboard.download import render_download_button
 from src.dashboard.footer import render_footer
 from src.dashboard.map_view import render_map
+from src.dashboard.weather_card import render_weather_card
+from src.dashboard.irrigation_card import render_irrigation_card
+from src.dashboard.moisture_card import render_moisture_card
+from src.dashboard.crop_card import render_crop_card
+
+from src.time_series.dataset_builder import build_time_series_dataset
+from src.time_series.temporal_analysis import analyze_time_series
+from src.dashboard.trend_chart import render_trend_charts
+from src.dashboard.analytics_card import render_time_series_analytics
 
 
 st.set_page_config(
@@ -26,7 +32,7 @@ st.set_page_config(
     layout="wide",
 )
 
-location, start_date, end_date, analyze = render_sidebar()
+location, start_date, end_date, analyze, build_dataset = render_sidebar()
 
 render_header()
 
@@ -38,6 +44,15 @@ if "ndvi_image" not in st.session_state:
 
 if "satellite_image" not in st.session_state:
     st.session_state.satellite_image = None
+
+if "time_series_df" not in st.session_state:
+    st.session_state.time_series_df = None
+
+if "time_series_csv" not in st.session_state:
+    st.session_state.time_series_csv = None
+
+if "time_series_analytics" not in st.session_state:
+    st.session_state.time_series_analytics = None
 
 
 if analyze:
@@ -54,7 +69,26 @@ if analyze:
 
     st.success("✅ Analysis Completed!")
 
-elif st.session_state.report is None:
+
+if build_dataset:
+    with st.spinner("Building time-series dataset..."):
+        df, csv_path = build_time_series_dataset(
+            location=location,
+            start_date=str(start_date),
+            end_date=str(end_date),
+            max_cloud=40,
+        )
+
+        analytics = analyze_time_series(df)
+
+        st.session_state.time_series_df = df
+        st.session_state.time_series_csv = csv_path
+        st.session_state.time_series_analytics = analytics
+
+    st.success("✅ Time-Series Dataset Built Successfully!")
+
+
+if st.session_state.report is None:
     try:
         with open("outputs/analysis_report.json", "r") as file:
             st.session_state.report = json.load(file)
@@ -89,6 +123,7 @@ if report:
     render_ndvi_metrics(report)
 
     render_health_card(report)
+    render_crop_card(report)
     render_weather_card(report)
     render_irrigation_card(report)
     render_moisture_card(report)
@@ -101,6 +136,24 @@ if report:
         )
     else:
         st.info("Run a fresh analysis to view Sentinel-2 and NDVI map layers.")
+
+    if st.session_state.time_series_df is not None:
+        render_time_series_analytics(
+            st.session_state.time_series_analytics
+        )
+
+        render_trend_charts(
+            st.session_state.time_series_df
+        )
+
+        csv_data = st.session_state.time_series_df.to_csv(index=False)
+
+        st.download_button(
+            label="⬇ Download Time-Series CSV",
+            data=csv_data,
+            file_name="krishimitra_time_series_dataset.csv",
+            mime="text/csv",
+        )
 
     render_download_button(report)
 

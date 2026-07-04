@@ -1,0 +1,2 @@
+location,latitude,longitude,date,ndvi,ndwi,msi,cloud_cover,temperature,rainfall,humidity,wind_speed
+"Rohtak, Haryana",28.9010899,76.5801935,2024-01-14,-0.0028082351721128835,0.0017191959396827435,0.9347827927626673,31.296808,8.7,0.0,89,4.9

@@ -1,3 +1,6 @@
+from datetime import datetime
+from src.crop_classification.model_predictor import predict_crop_from_features
+from src.crop_classification.crop_classifier import classify_crop
 from src.preprocessing.cloud_mask import mask_clouds
 from src.feature_engineering.vegetation_indices import (
     calculate_ndvi,
@@ -38,27 +41,15 @@ def analyze_location(location, start_date, end_date):
     msi_image = calculate_msi(masked_image)
 
     ndvi_stats = calculate_index_statistics(
-        ndvi_image,
-        "NDVI",
-        longitude,
-        latitude,
-        buffer_meters=1000,
+        ndvi_image, "NDVI", longitude, latitude, buffer_meters=1000
     )
 
     ndwi_stats = calculate_index_statistics(
-        ndwi_image,
-        "NDWI",
-        longitude,
-        latitude,
-        buffer_meters=1000,
+        ndwi_image, "NDWI", longitude, latitude, buffer_meters=1000
     )
 
     msi_stats = calculate_index_statistics(
-        msi_image,
-        "MSI",
-        longitude,
-        latitude,
-        buffer_meters=1000,
+        msi_image, "MSI", longitude, latitude, buffer_meters=1000
     )
 
     metadata = get_image_metadata(image)
@@ -66,6 +57,17 @@ def analyze_location(location, start_date, end_date):
     crop_report = interpret_ndvi(ndvi_stats["NDVI_mean"])
 
     weather = get_weather(latitude, longitude)
+    ml_features = {
+    "ndvi": ndvi_stats["NDVI_mean"],
+    "ndwi": ndwi_stats["NDWI_mean"],
+    "msi": msi_stats["MSI_mean"],
+    "temperature": weather["temperature"],
+    "rainfall": weather["rainfall"],
+    "humidity": weather["humidity"],
+    "wind_speed": weather["wind_speed"],
+}
+
+    ml_crop_prediction = predict_crop_from_features(ml_features)
 
     irrigation_advice = generate_irrigation_advice(
         mean_ndvi=ndvi_stats["NDVI_mean"],
@@ -82,6 +84,15 @@ def analyze_location(location, start_date, end_date):
         moisture_status=moisture_status,
         rainfall=weather["rainfall"],
         temperature=weather["temperature"],
+    )
+
+    month = datetime.strptime(start_date, "%Y-%m-%d").month
+
+    crop_prediction = classify_crop(
+        mean_ndvi=ndvi_stats["NDVI_mean"],
+        mean_ndwi=ndwi_stats["NDWI_mean"],
+        mean_msi=msi_stats["MSI_mean"],
+        month=month,
     )
 
     report = {
@@ -112,6 +123,8 @@ def analyze_location(location, start_date, end_date):
         "irrigation_advice": irrigation_advice,
         "moisture_status": moisture_status,
         "water_stress_advice": water_stress_advice,
+        "crop_prediction": crop_prediction,
+        "ml_crop_prediction": ml_crop_prediction,
     }
 
     save_analysis_report(
