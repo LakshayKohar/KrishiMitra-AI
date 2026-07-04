@@ -2,6 +2,8 @@ from src.preprocessing.cloud_mask import mask_clouds
 from src.feature_engineering.vegetation_indices import calculate_ndvi
 from src.feature_engineering.ndvi_statistics import calculate_ndvi_statistics
 from src.utils.geocoder import get_coordinates
+from src.irrigation_engine.crop_health import interpret_ndvi
+from src.utils.report_generator import save_analysis_report
 from src.data_acquisition.sentinel import (
     initialize,
     get_sentinel_image,
@@ -64,6 +66,25 @@ def main():
     print(f"Minimum NDVI : {stats['NDVI_min']:.3f}")
     print(f"Maximum NDVI : {stats['NDVI_max']:.3f}")
     print(f"Average NDVI : {stats['NDVI_mean']:.3f}")
+
+    # Crop Health Report
+    report = interpret_ndvi(stats["NDVI_mean"])
+
+    print("\nCrop Health Report")
+    print("-" * 30)
+    print(f"Health Status : {report['status']}")
+    print(f"Recommendation: {report['recommendation']}")
+
+    # Save analysis report
+    save_analysis_report(
+        location="NIT Kurukshetra, Haryana",
+        latitude=latitude,
+        longitude=longitude,
+        cloud_cover=metadata["cloud_cover"],
+        ndvi_stats=stats,
+        crop_health=report["status"],
+        recommendation=report["recommendation"],
+    )
 
 
 if __name__ == "__main__":

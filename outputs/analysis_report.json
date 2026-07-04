@@ -1,0 +1,13 @@
+{
+    "location": "Gurugram, Haryana",
+    "latitude": 28.4646148,
+    "longitude": 77.0299194,
+    "cloud_cover": 31.296808,
+    "ndvi": {
+        "minimum": -1,
+        "maximum": 1,
+        "average": 0.20901859067135314
+    },
+    "crop_health": "Poor Vegetation",
+    "recommendation": "Inspect the field for water stress, pests, or nutrient deficiencies."
+}
