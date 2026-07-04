@@ -9,21 +9,52 @@ def add_ndvi_legend(map_object):
         position: fixed;
         bottom: 50px;
         left: 50px;
-        width: 220px;
-        height: 145px;
-        background-color: white;
-        border:2px solid grey;
-        z-index:9999;
-        font-size:14px;
-        padding: 10px;
-        border-radius: 8px;
+        width: 260px;
+        background-color: rgba(255, 255, 255, 0.98);
+        border: 2px solid #444;
+        z-index: 9999;
+        font-size: 15px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 600;
+        color: #111;
+        padding: 14px;
+        border-radius: 10px;
+        box-shadow: 3px 3px 10px rgba(0,0,0,0.35);
+        line-height: 1.5;
     ">
-    <b>NDVI Legend</b><br>
-    <span style="color:red;">■</span> Low Vegetation / Stress<br>
-    <span style="color:orange;">■</span> Sparse Vegetation<br>
-    <span style="color:yellow;">■</span> Moderate Vegetation<br>
-    <span style="color:lightgreen;">■</span> Healthy Vegetation<br>
-    <span style="color:green;">■</span> Dense Vegetation
+        <div style="
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #111;
+        ">
+            🌿 NDVI Legend
+        </div>
+
+        <div>
+            <span style="display:inline-block;width:13px;height:13px;background:red;margin-right:8px;"></span>
+            <b>Low Vegetation / Stress</b>
+        </div>
+
+        <div>
+            <span style="display:inline-block;width:13px;height:13px;background:orange;margin-right:8px;"></span>
+            <b>Sparse Vegetation</b>
+        </div>
+
+        <div>
+            <span style="display:inline-block;width:13px;height:13px;background:yellow;margin-right:8px;border:1px solid #999;"></span>
+            <b>Moderate Vegetation</b>
+        </div>
+
+        <div>
+            <span style="display:inline-block;width:13px;height:13px;background:lightgreen;margin-right:8px;"></span>
+            <b>Healthy Vegetation</b>
+        </div>
+
+        <div>
+            <span style="display:inline-block;width:13px;height:13px;background:green;margin-right:8px;"></span>
+            <b>Dense Vegetation</b>
+        </div>
     </div>
     """
     map_object.get_root().html.add_child(folium.Element(legend_html))
