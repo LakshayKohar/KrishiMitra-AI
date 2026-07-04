@@ -19,5 +19,10 @@ def render_crop_card(report):
         st.metric("ML Predicted Crop", ml_crop["crop"])
         st.write(f"**Confidence:** {ml_crop['confidence']}")
         st.info(ml_crop["reason"])
+        st.warning(
+            "Note: ML prediction quality depends on the training dataset. "
+            "Synthetic datasets are only for testing."
+                    
+                    )
 
     st.divider()

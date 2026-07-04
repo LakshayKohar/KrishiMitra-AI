@@ -1,5 +1,3 @@
-from src.dashboard.growth_stage_card import render_growth_stage_card
-from src.dashboard.final_advisory_card import render_final_advisory_card
 import sys
 from pathlib import Path
 
@@ -8,7 +6,7 @@ sys.path.append(str(project_root))
 
 import json
 import streamlit as st
-
+from src.utils.pdf_report import generate_pdf_report
 from src.analysis_pipeline import analyze_location
 from src.dashboard.header import render_header
 from src.dashboard.sidebar import render_sidebar
@@ -21,6 +19,8 @@ from src.dashboard.weather_card import render_weather_card
 from src.dashboard.irrigation_card import render_irrigation_card
 from src.dashboard.moisture_card import render_moisture_card
 from src.dashboard.crop_card import render_crop_card
+from src.dashboard.growth_stage_card import render_growth_stage_card
+from src.dashboard.final_advisory_card import render_final_advisory_card
 
 from src.time_series.dataset_builder import build_time_series_dataset
 from src.time_series.temporal_analysis import analyze_time_series
@@ -58,36 +58,46 @@ if "time_series_analytics" not in st.session_state:
 
 
 if analyze:
-    with st.spinner("Analyzing satellite data..."):
-        report, ndvi_image, satellite_image = analyze_location(
-            location,
-            str(start_date),
-            str(end_date),
-        )
+    try:
+        with st.spinner("Analyzing satellite data..."):
+            report, ndvi_image, satellite_image = analyze_location(
+                location,
+                str(start_date),
+                str(end_date),
+            )
 
-        st.session_state.report = report
-        st.session_state.ndvi_image = ndvi_image
-        st.session_state.satellite_image = satellite_image
+            st.session_state.report = report
+            st.session_state.ndvi_image = ndvi_image
+            st.session_state.satellite_image = satellite_image
 
-    st.success("✅ Analysis Completed!")
+        st.success("✅ Analysis Completed!")
+
+    except Exception as error:
+        st.error("❌ Analysis failed. Try another location or date range.")
+        st.exception(error)
 
 
 if build_dataset:
-    with st.spinner("Building time-series dataset..."):
-        df, csv_path = build_time_series_dataset(
-            location=location,
-            start_date=str(start_date),
-            end_date=str(end_date),
-            max_cloud=40,
-        )
+    try:
+        with st.spinner("Building time-series dataset..."):
+            df, csv_path = build_time_series_dataset(
+                location=location,
+                start_date=str(start_date),
+                end_date=str(end_date),
+                max_cloud=40,
+            )
 
-        analytics = analyze_time_series(df)
+            analytics = analyze_time_series(df)
 
-        st.session_state.time_series_df = df
-        st.session_state.time_series_csv = csv_path
-        st.session_state.time_series_analytics = analytics
+            st.session_state.time_series_df = df
+            st.session_state.time_series_csv = csv_path
+            st.session_state.time_series_analytics = analytics
 
-    st.success("✅ Time-Series Dataset Built Successfully!")
+        st.success("✅ Time-Series Dataset Built Successfully!")
+
+    except Exception as error:
+        st.error("❌ Time-series dataset generation failed.")
+        st.exception(error)
 
 
 if st.session_state.report is None:
@@ -123,7 +133,6 @@ if report:
     st.divider()
 
     render_ndvi_metrics(report)
-
     render_health_card(report)
     render_crop_card(report)
     render_growth_stage_card(report)
@@ -160,5 +169,16 @@ if report:
         )
 
     render_download_button(report)
+
+    if report:
+     pdf_path = generate_pdf_report(report)
+
+    with open(pdf_path, "rb") as pdf_file:
+        st.download_button(
+            label="⬇ Download PDF Report",
+            data=pdf_file,
+            file_name="krishimitra_report.pdf",
+            mime="application/pdf",
+        )
 
 render_footer()

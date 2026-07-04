@@ -1,34 +1,41 @@
-# 🌾 KrishiMitra AI
+# KrishiMitra AI
 
-## AI-Driven Crop Monitoring and Irrigation Advisory System
+KrishiMitra AI is an AI-powered agricultural decision support platform using satellite imagery, weather data, and machine learning.
 
-KrishiMitra AI is an intelligent agricultural decision-support platform that uses Sentinel-1 (SAR) and Sentinel-2 (Optical) satellite imagery to:
+## Features
 
-- Crop Type Classification
-- Crop Growth Stage Detection
-- Moisture Stress Detection
-- Intelligent Irrigation Recommendation
-- Interactive Dashboard
+- Google Earth Engine integration
+- Sentinel-2 satellite imagery
+- NDVI, NDWI, MSI calculation
+- Cloud masking
+- Crop health monitoring
+- Moisture stress detection
+- Weather intelligence
+- Irrigation advisory
+- Crop classification framework
+- Growth stage detection
+- Time-series dataset builder
+- Interactive Streamlit dashboard
+- PDF and JSON report export
 
-## Technologies
+## Tech Stack
 
 - Python
 - Streamlit
 - Google Earth Engine
-- Sentinel-1
 - Sentinel-2
-- Scikit-Learn
-- XGBoost
-- Git
-- GitHub
+- Folium
+- Open-Meteo API
+- Scikit-learn
+- Pandas
 
----
+## Run Locally
 
-Developed for ISRO BAH 2026
-
-Team Members
-
-- Pankaj
-- Lakshay
-- Anuruddh Singh Parihar
-- Ritesh
+```bash
+git clone <repo-url>
+cd KrishiMitra-AI
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python3 -m streamlit run src/dashboard/app.py
+```
