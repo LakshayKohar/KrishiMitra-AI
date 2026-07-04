@@ -1,3 +1,5 @@
+from src.dashboard.weather_card import render_weather_card
+from src.dashboard.irrigation_card import render_irrigation_card
 import sys
 from pathlib import Path
 
@@ -86,6 +88,8 @@ if report:
     render_ndvi_metrics(report)
 
     render_health_card(report)
+    render_weather_card(report)
+    render_irrigation_card(report)
 
     if ndvi_image is not None and satellite_image is not None:
         render_map(

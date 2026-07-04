@@ -1,13 +1,13 @@
 {
-    "location": "Gurugram, Haryana",
-    "latitude": 28.4646148,
-    "longitude": 77.0299194,
+    "location": "Rohtak, Haryana",
+    "latitude": 28.9010899,
+    "longitude": 76.5801935,
     "cloud_cover": 31.296808,
     "ndvi": {
-        "minimum": -1,
-        "maximum": 1,
-        "average": 0.20901859067135314
+        "minimum": -0.05126694166175604,
+        "maximum": 0.03373313343328336,
+        "average": -0.0028082351721128835
     },
-    "crop_health": "Poor Vegetation",
-    "recommendation": "Inspect the field for water stress, pests, or nutrient deficiencies."
+    "crop_health": "Very Sparse or No Vegetation",
+    "recommendation": "No healthy crop detected. Verify crop stage or field condition."
 }
